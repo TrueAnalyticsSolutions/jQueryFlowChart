@@ -96,9 +96,7 @@ $.fn.flowchart = (function (data) {
       }
       if ((data["hasResults"] && data["results"]["#" + this.Id]) || !data["hasResults"]) {
         for (var len = this.PassNames.length, n = 0; n < len; n++) {
-          if (drawByName(this.PassNames[n], "#089342")) {
-            break;
-          }
+          drawByName(this.PassNames[n], "#089342")
         }
       }
       if ((data["hasResults"] && !data["results"]["#" + this.Id]) || !data["hasResults"]) {
