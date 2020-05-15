@@ -1,0 +1,96 @@
+:root {
+  --size: 50px;
+}
+.flowchart {
+  --sizeQuarter: calc(var(--size) / 4);
+  position: relative;
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.flowchart canvas {
+  position: absolute;
+  display: block;
+  top: 0px;
+  left: 0px;
+  z-index: -1;
+}
+.expression {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  margin-bottom: var(--sizeQuarter);
+}
+.logic {
+  --width: var(--size);
+  position: relative;
+  display: table-cell;
+  background-color: skyblue;
+  width: auto;
+  min-width: var(--size);
+  height: var(--size);
+  /*border: 2px solid slategrey;
+  box-shadow: 0 0 4px 4px #262626;*/
+  margin: var(--sizeQuarter);
+  margin-left: calc(3 * var(--sizeQuarter));
+  box-sizing: border-box;
+  font-family: Arial;
+  font-size: var(--sizeQuarter);
+  line-height: var(--size);
+  text-align: center;
+  vertical-align: middle;
+  padding-left: 3px;
+  padding-right: 3px;
+}
+.logic[contenteditable]:empty,
+.logic-if[contenteditable]:empty::before {
+  box-shadow: 0 0 3px 4px orange;
+  cursor: pointer;
+  animation: pulseEdit 1.6s infinite;
+}
+@keyframes pulseEdit{
+  0% {box-shadow: 0 0 3px 4px orange;}
+  50% {box-shadow: 0 0 5px 6px orange;}
+  100% {box-shadow: 0 0 3px 4px orange;}
+}
+.logic[contenteditable]:empty::after{
+  content: "Set a Value Here!";
+}
+.logic[contenteditable][placeholder]:empty::after{
+  content: attr(placeholder);
+}
+.logic[contenteditable]:empty:focus::after{
+  content: "";
+}
+.logic-if {
+  background-color: transparent;
+  box-shadow: none;
+  border: none;
+  z-index: 100;
+}
+.logic-if[contenteditable] {
+  box-shadow: none;
+}
+.logic-if::before {
+  content: "";
+  position: absolute;
+  display: block;
+  width: var(--size);
+  height: var(--size);
+  top: 0px;
+  left: calc(50% - (var(--size) / 2));
+  max-width: var(--size);
+  max-height: var(--size);
+  transform-origin: center;
+  transform: rotate(-45deg);
+  background-color: goldenrod;
+  overflow: initial;
+  z-index: -1;
+}
+.logic-blank{
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+}

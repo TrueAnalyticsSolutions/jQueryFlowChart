@@ -12,12 +12,15 @@
     "url": "https://github.com/TrueAnalyticsSolutions/jQueryFlowChart/issues"
   },
   "homepage": "https://github.com/TrueAnalyticsSolutions/jQueryFlowChart",
+  "license": "MIT",
   "main": "jquery.flowchart.js",
   "files": [
-    "jquery.flowchart.js",
-    "jquery.flowchart.css"
+    "src/js/tams.flowchart.js",
+    "src/css/tams.flowchart.css",
+    "dist/js/tams.flowchart.min.js",
+    "dist/css/tams.flowchart.min.css"
   ],
   "dependencies": {
-  
+    "jquery": ">=1.7"
   }
 }
