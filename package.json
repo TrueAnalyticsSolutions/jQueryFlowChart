@@ -16,8 +16,5 @@
     "src/css/tams.flowchart.css",
     "dist/js/tams.flowchart.min.js",
     "dist/css/tams.flowchart.min.css"
-  ],
-  "dependencies": {
-    "jquery": ">=1.7"
-  }
+  ]
 }
