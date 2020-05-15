@@ -1,5 +1,5 @@
 {
-  "name": "@TrueAnalyticsSolutions/tams-jquery-flowchart",
+  "name": "@trueanalyticssolutions/tams-flowchart",
   "version": "0.1.0",
   "description": "A DOM-based flowchart library for visualizing interactive flows of logic.",
   "author": "True Analytics Manufacturing Solutions",
@@ -13,7 +13,7 @@
   },
   "homepage": "https://github.com/TrueAnalyticsSolutions/jQueryFlowChart",
   "license": "MIT",
-  "main": "jquery.flowchart.js",
+  "main": "src/js/tams.flowchart.js",
   "files": [
     "src/js/tams.flowchart.js",
     "src/css/tams.flowchart.css",
