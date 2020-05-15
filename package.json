@@ -1,12 +1,9 @@
 {
-  "name": "tams-jquery-flowchart",
+  "name": "@TrueAnalyticsSolutions/tams-jquery-flowchart",
   "version": "0.1.0",
   "description": "A DOM-based flowchart library for visualizing interactive flows of logic.",
   "author": "True Analytics Manufacturing Solutions",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/TrueAnalyticsSolutions/jQueryFlowChart.git"
-  },
+  "repository": "https://github.com/TrueAnalyticsSolutions/jQueryFlowChart.git",
   "keywords": [],
   "bugs": {
     "url": "https://github.com/TrueAnalyticsSolutions/jQueryFlowChart/issues"
