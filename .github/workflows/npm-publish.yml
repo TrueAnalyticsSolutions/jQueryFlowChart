@@ -16,9 +16,5 @@ jobs:
         node-version: 10.0.0
     - run: npm install
     - run: npm test
-    - uses: JS-DevTools/npm-publish@v1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        registry: https://npm.pkg.github.com/
-        check-version: false
+    - run: npm publish
 
