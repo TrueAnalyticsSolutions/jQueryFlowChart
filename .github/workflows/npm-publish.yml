@@ -16,6 +16,5 @@ jobs:
         node-version: 10.0.0
     - run: npm install
     - run: npm test
-    - run: npm login --registry=https://npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}
     - run: npm publish
 
