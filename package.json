@@ -4,9 +4,6 @@
   "description": "A DOM-based flowchart library for visualizing interactive flows of logic.",
   "author": "True Analytics Manufacturing Solutions",
   "repository": "https://github.com/TrueAnalyticsSolutions/jQueryFlowChart.git",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  },
   "keywords": [],
   "bugs": {
     "url": "https://github.com/TrueAnalyticsSolutions/jQueryFlowChart/issues"
