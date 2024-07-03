@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.13.8/mermaid.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.13.8/mermaid.min.js"></script>
+  <script src="../src/js/tams.flowchart.js"></script>
+</head>
+<body>
+  <div id="flowchart"></div>
+  <script>
+    $(document).ready(function() {
+      const flowchart = $('#flowchart').flowchart({
+        nodeSize: '50px',
+        lineSize: 3,
+        results: [
+          {
+            id: 'node1',
+            label: 'Start',
+            conditionFunction: null,  // no condition
+            passNodes: ['node2'],
+            failNodes: []
+          },
+          {
+            id: 'node2',
+            label: 'Decision 1',
+            conditionFunction: () => Math.random() > 0.5,  // random condition
+            passNodes: ['node4'],
+            failNodes: ['node3']
+          },
+          {
+            id: 'node3',
+            label: 'End 1',
+            conditionFunction: null,  // no condition
+            passNodes: [],
+            failNodes: []
+          },
+          {
+            id: 'node4',
+            label: 'Decision 2',
+            conditionFunction: () => true,  // condition is true
+            passNodes: ['node5'],
+            failNodes: []
+          },
+          {
+            id: 'node5',
+            label: 'End 2',
+            conditionFunction: null,  // no condition
+            passNodes: [],
+            failNodes: []
+          }
+        ]
+      });
+
+      flowchart.addNode('node1', 'Start', 
+        null, ['node2'], []);
+      flowchart.addNode('node2', 'Decision 1', 
+        () => Math.random() > 0.5, ['node4'], ['node3']);
+      flowchart.addNode('node3', 'End 1', 
+        null, [], []);
+      flowchart.addNode('node4', 'Decision 2', 
+        () => true, ['node5'], []);
+      flowchart.addNode('node5', 'End 2', 
+        null, [], []);
+
+      flowchart.updateDiagram();
+    });
+  </script>
+</body>
+</html>

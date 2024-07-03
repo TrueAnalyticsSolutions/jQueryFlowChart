@@ -1,132 +1,111 @@
-$.fn.flowchart = (function (data = {}) {
-  const $this = $(this);
+class Flowchart {
+  constructor(selector, data = {}) {
+    this.selector = selector;
+    this.data = data;
+    this.nodes = [];
+    this.edges = [];
+    this.linkStyles = [];
+    this.init();
+  }
 
-  const setNodeSize = () => {
-    const nodeSize = data.nodeSize || $this.attr("data-node-size");
+  init() {
+    this.setNodeSize();
+    this.setLineSize();
+    this.setResults();
+    this.generateDiagram();
+  }
+
+  setNodeSize() {
+    const nodeSize = this.data.nodeSize || $(this.selector).attr("data-node-size");
     if (nodeSize) {
-      data.nodeSize = nodeSize;
-      $this.css("--size", nodeSize);
+      this.data.nodeSize = nodeSize;
+      $(this.selector).css("--size", nodeSize);
     }
-  };
+  }
 
-  const setLineSize = () => {
-    data.lineSize = data.lineSize || $this.attr("data-line-size") || 3;
-  };
+  setLineSize() {
+    this.data.lineSize = this.data.lineSize || $(this.selector).attr("data-line-size") || 3;
+  }
 
-  const setResults = () => {
-    data.hasResults = Boolean(data.results);
-  };
+  setResults() {
+    this.data.hasResults = Boolean(this.data.results);
+  }
 
-  const initializeCanvas = () => {
-    let canv = $this.find("canvas")[0] || $this[0].appendChild(document.createElement("canvas"));
-    canv.width = $this[0].clientWidth;
-    canv.height = $this[0].clientHeight;
-    return canv.getContext("2d");
-  };
+  addNode(id, label, conditionFunction = null, passNodes = [], failNodes = []) {
+    this.nodes.push({ id, label, conditionFunction, passNodes, failNodes });
+  }
 
-  const initializeData = () => {
-    setNodeSize();
-    setLineSize();
-    setResults();
-  };
+  addLinkStyle(index, color) {
+    this.linkStyles.push(`linkStyle ${index} stroke:${color},stroke-width:3px;`);
+  }
 
-  initializeData();
-  const ctx = initializeCanvas();
+  generateDiagram() {
+    let diagram = "graph TD\n";
+    const shapes = {
+      "round": { "start": "(", "end": ")" },
+      "stadium": { "start": "([", "end": "])" },
+      "subroutine": { "start": "[[", "end": "]]" },
+      "cylindrical": { "start": "[(", "end": ")]" },
+      "circle": { "start": "((", "end": "))" },
+      "asymmetric": { "start": ">", "end": "]" },
+      "rhombus": { "start": "{", "end": "}" },
+      "hexagon": { "start": "{{", "end": "}}" },
+      "parallelogram": { "start": "[/", "end": "/]" },
+      "parallelogram_alt": { "start": "[\\", "end": "\\]" },
+      "trapezoid": { "start": "[/", "end": "\\]" },
+      "trapezoid_alt": { "start": "[\\", "end": "/]" },
+      "double_circle": { "start": "(((", "end": ")))" }
+    };
 
-  class Logic {
-    constructor(expr, el) {
-      this.FlowChart = expr.FlowChart;
-      this.Expression = expr;
-      this.Element = el;
-      this.Id = el.getAttribute("id") || "";
-      this.PassNames = el.getAttribute("data-pass")?.split(",") || [];
-      this.FailName = el.getAttribute("data-fail") || "";
-      this.Dependency = el.getAttribute("data-parent") || "";
+    this.nodes.forEach(node => {
+      const shape = node.conditionFunction ? shapes.rhombus : shapes.stadium;
+      diagram += `  ${node.id}${shape.start}${node.label}${shape.end}\n`;
+    });
 
-      this.setupElement();
-      this.bindEvents();
-    }
+    this.edges.forEach((edge, index) => {
+      const color = edge.condition === "pass" ? "#089342" : "#a90329";
+      this.addLinkStyle(index, color);
+      diagram += `  ${edge.from} -->|${edge.condition}| ${edge.to}:::linkStyle${index}\n`;
+    });
 
-    setupElement() {
-      if (this.Dependency && $(this.Dependency)[0].style.display === "none") {
-        this.Element.style.display = "none";
-      } else {
-        this.Element.style.display = "table-cell";
-      }
-      this.Element.getXY = () => {
-        const flowRect = $(this).closest(".flowchart")[0].getBoundingClientRect();
-        const thisRect = this.getBoundingClientRect();
-        return {
-          x: (thisRect.left - flowRect.left) + (thisRect.width / 2),
-          y: (thisRect.top - flowRect.top) + (thisRect.height / 2)
-        };
-      };
-    }
+    diagram += this.linkStyles.join("\n");
 
-    bindEvents() {
-      $(this.Element).off("input").on("input", () => {
-        $this.flowchart();
-      });
-    }
+    $(this.selector).html(`<div class="mermaid">${diagram}</div>`);
+    mermaid.init(undefined, $(this.selector).find(".mermaid"));
+  }
 
-    draw(ctx) {
-      if (this.Element.style.display === "none") return;
-      const point = this.Element.getXY();
-      ctx.lineWidth = data.lineSize;
-
-      const linesTo = (source, target) => {
-        ctx.moveTo(source.x, source.y);
-        const midHeight = source.y + ((target.y - source.y) / 2);
-        ctx.lineTo(source.x, midHeight);
-        ctx.lineTo(target.x, midHeight);
-        ctx.lineTo(target.x, target.y);
-        ctx.stroke();
-      };
-
-      const drawByName = (name, color = "#262626") => {
-        const log = findLogic(name);
-        if (log && log.Element.style.display !== "none") {
-          const pPoint = log.Element.getXY();
-          ctx.beginPath();
-          ctx.strokeStyle = color;
-          linesTo(point, pPoint);
-        } else if (name) {
-          console.log(`Can't find '${name}'`);
+  evaluateNodes() {
+    this.edges = [];
+    this.nodes.forEach(node => {
+      if (node.conditionFunction) {
+        const result = node.conditionFunction();
+        if (result) {
+          node.passNodes.forEach(target => {
+            this.addEdge(node.id, target, "pass");
+          });
+        } else {
+          node.failNodes.forEach(target => {
+            this.addEdge(node.id, target, "fail");
+          });
         }
-      };
+      }
+    });
+  }
 
-      if (data.hasResults ? data.results[`#${this.Id}`] : true) {
-        this.PassNames.forEach(name => drawByName(name, "#089342"));
-      }
-      if (data.hasResults ? !data.results[`#${this.Id}`] : true) {
-        drawByName(this.FailName, "#a90329");
-      }
+  addEdge(from, to, condition = "pass") {
+    if (to) {
+      this.edges.push({ from, to, condition });
     }
   }
 
-  class Expression {
-    constructor(el) {
-      this.FlowChart = $this;
-      this.Element = el;
-      this.Items = Array.from($(el).find(".logic")).map(logicEl => new Logic(this, logicEl));
-    }
-
-    has(id) {
-      return this.get(id) !== null;
-    }
-
-    get(id) {
-      return this.Items.find(item => `#${item.Id.toLowerCase()}` === id.toLowerCase()) || null;
-    }
-
-    draw(ctx) {
-      this.Items.forEach(item => item.draw(ctx));
-    }
+  updateDiagram() {
+    this.evaluateNodes();
+    this.generateDiagram();
   }
+}
 
-  const expressions = Array.from($this.find(".expression")).map(expEl => new Expression(expEl));
-  expressions.forEach(exp => exp.draw(ctx));
-  $this.data = data;
-
-  return $this;
-});
+$.fn.flowchart = function(data) {
+  const flowchart = new Flowchart(this, data);
+  flowchart.updateDiagram();
+  return flowchart;
+};
